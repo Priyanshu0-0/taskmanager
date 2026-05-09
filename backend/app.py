@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timedelta
@@ -7,15 +7,6 @@ import bcrypt
 import jwt
 import os
 from dotenv import load_dotenv
-from flask import Flask, send_from_directory
-
-@app.route('/<path:filename>')
-def serve_static(filename):
-    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), filename)
-
-@app.route('/')
-def home():
-    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), 'indexing.html')
 
 load_dotenv()
 
@@ -224,28 +215,31 @@ def get_tasks(project_id):
         'id': t.id, 'title': t.title, 'status': t.status,
         'priority': t.priority, 'assignee_id': t.assignee_id
     } for t in tasks])
+
 @app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
 @require_auth
 def delete_task(task_id):
     task = Task.query.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
-    
-    # Allow delete if admin or task creator
     if request.current_user['role'] == 'ADMIN' or task.created_by_id == request.current_user['id']:
         db.session.delete(task)
         db.session.commit()
         return jsonify({'message': 'Task deleted successfully'}), 200
-    else:
-        return jsonify({'error': 'Not authorized to delete this task'}), 403
+    return jsonify({'error': 'Not authorized'}), 403
+
+# ===================== STATIC FILES =====================
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), filename)
+
+@app.route('/')
+def home():
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), 'indexing.html')
 
 # ===================== STARTUP =====================
 with app.app_context():
     db.create_all()
-
-@app.route('/')
-def home():
-    return {"message": "Task Manager API is running"}
 
 if __name__ == '__main__':
     app.run(debug=True)
