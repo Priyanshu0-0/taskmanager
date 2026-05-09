@@ -1,0 +1,43 @@
+body {
+  background: #f8f1e9; 
+  color: #333;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.card {
+  background: white;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.btn-primary {
+  background: #4a6cf7; 
+  border: none;
+  border-radius: 12px;
+}
+
+.btn-success {
+  background: #ff69b4; 
+  border: none;
+  border-radius: 12px;
+}
+
+.btn-danger {
+  background: #ff4d94;
+}
+
+.navbar {
+  background: #4a6cf7 !important;
+  color: white;
+}
+
+.status-todo { background: #ffe066; color: #333; }
+.status-progress { background: #4a6cf7; color: white; }
+.status-review { background: #ff9ff3; color: #333; }
+.status-done { background: #4ade80; color: white; }
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(74, 108, 247, 0.15);
+}

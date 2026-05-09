@@ -3,24 +3,157 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Dashboard - TaskBubble</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+   /* Professional, Bright & Thoughtful Dashboard Theme */
+:root {
+  --primary: #2563eb;      /* Bright professional blue */
+  --accent: #7c3aed;       /* Soft purple accent */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --light-bg: #f8fafc;
+  --card-bg: #ffffff;
+  --text: #1e2937;
+  --text-light: #64748b;
+}
+
+body {
+  background: var(--light-bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.navbar {
+  background: linear-gradient(90deg, #2563eb, #3b82f6) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.card {
+  background: var(--card-bg);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
+}
+
+.stat-number {
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #2563eb, #7c3aed);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-primary {
+  background: var(--primary);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 28px;
+  font-weight: 600;
+}
+
+.btn-pink {
+  background: #ec4899;
+  color: white;
+  border: none;
+  border-radius: 12px;
+}
+
+h2, h4 {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.lead {
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+/* Status Badges */
+.status-todo    { background: #fef3c7; color: #92400e; }
+.status-progress{ background: #dbeafe; color: #1e40af; }
+.status-review  { background: #f3e8ff; color: #6b21a8; }
+.status-done    { background: #d1fae5; color: #065f46; }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Task Manager</a>
-      <button onclick="logout()" class="btn btn-outline-light">Logout</button>
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="home.html">TaskBubble 🎨</a>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="home.html">Home</a>
+        <a class="nav-link" href="projects.html">Projects</a>
+        <a class="nav-link active" href="dashbord.html">Dashboard</a>
+        <a class="nav-link btn btn-light ms-3 px-3" onclick="logout()">Logout</a>
+      </div>
     </div>
   </nav>
 
-  <div class="container mt-4">
-    <h2>Welcome back!</h2>
-    <button onclick="location.href='projects.html'" class="btn btn-primary">Manage Projects</button>
+  <div class="container mt-5">
+    <h2 class="display-5 fw-bold mb-4" id="dashboardTitle">Dashboard</h2>
+    <div id="dashboardContent" class="row"></div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    function logout() { sessionStorage.removeItem('token'); location.href = 'indexing.html'; }
+    const token = sessionStorage.getItem('token');
+    if (!token) location.href = 'indexing.html';
+
+    async function loadDashboard() {
+      // Get user info from token (simple decode)
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const isAdmin = payload.role === 'ADMIN';
+
+      document.getElementById('dashboardTitle').textContent = isAdmin ? "Admin Dashboard 👑" : "My Dashboard";
+
+      let html = '';
+
+      if (isAdmin) {
+        html = `
+          <div class="col-12">
+            <h4 class="mb-4">Admin Overview - Everything</h4>
+            <div class="row">
+              <div class="col-md-3"><div class="card p-4 text-center"><h3>All Projects</h3><p class="stat-number">12</p></div></div>
+              <div class="col-md-3"><div class="card p-4 text-center"><h3>Total Tasks</h3><p class="stat-number">47</p></div></div>
+              <div class="col-md-3"><div class="card p-4 text-center"><h3>Active Users</h3><p class="stat-number">8</p></div></div>
+              <div class="col-md-3"><div class="card p-4 text-center"><h3>Completion</h3><p class="stat-number">68%</p></div></div>
+            </div>
+          </div>`;
+      } else {
+        html = `
+          <div class="col-12">
+            <h4 class="mb-4">Your Activity</h4>
+            <div class="row">
+              <div class="col-md-4"><div class="card p-4 text-center"><h5>My Projects</h5><p class="stat-number">4</p></div></div>
+              <div class="col-md-4"><div class="card p-4 text-center"><h5>Completion Rate</h5><p class="stat-number">75%</p></div></div>
+              <div class="col-md-4"><div class="card p-4 text-center"><h5>Days Active</h5><p class="stat-number">18</p></div></div>
+            </div>
+            <div class="card mt-4 p-4">
+              <h5>Recent Logs</h5>
+              <ul class="list-unstyled">
+                <li>Created "Client Website" project • 2 hours ago</li>
+                <li>Completed 3 tasks today</li>
+                <li>Added member to "Marketing Campaign"</li>
+              </ul>
+            </div>
+          </div>`;
+      }
+
+      document.getElementById('dashboardContent').innerHTML = html;
+    }
+
+    function logout() {
+      sessionStorage.clear();
+      location.href = 'indexing.html';
+    }
+
+    loadDashboard();
   </script>
 </body>
 </html>

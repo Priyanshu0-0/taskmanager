@@ -15,7 +15,7 @@ CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///taskmanager.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = os.getenv('JWT_SECRET', 'fallback-secret')
+app.config['SECRET_KEY'] = os.getenv('JWT_SECRET', 'supersecretkeychangethisinproduction123456789012345')
 
 db = SQLAlchemy(app)
 
@@ -73,14 +73,10 @@ class Task(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ===================== AUTH =====================
-JWT_SECRET = os.getenv('JWT_SECRET', 'fallback-secret')
+JWT_SECRET = os.getenv('JWT_SECRET', 'supersecretkeychangethisinproduction123456789012345')
 
 def generate_token(user_id, role):
-    payload = {
-        'user_id': user_id,
-        'role': role,
-        'exp': datetime.utcnow() + timedelta(hours=24)
-    }
+    payload = {'user_id': user_id, 'role': role, 'exp': datetime.utcnow() + timedelta(hours=24)}
     return jwt.encode(payload, JWT_SECRET, algorithm='HS256')
 
 def decode_token(token):
@@ -89,6 +85,20 @@ def decode_token(token):
     except:
         return None
 
+def require_auth(f):
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token or not token.startswith('Bearer '):
+            return jsonify({'error': 'Missing token'}), 401
+        payload = decode_token(token.split('Bearer ')[1].strip())
+        if not payload:
+            return jsonify({'error': 'Invalid token'}), 401
+        request.current_user = {'id': payload['user_id'], 'role': payload['role']}
+        return f(*args, **kwargs)
+    decorated.__name__ = f.__name__
+    return decorated
+
+# ===================== LOGIN / SIGNUP =====================
 @app.route('/api/signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -103,12 +113,14 @@ def signup():
         return jsonify({'error': 'Email already exists'}), 400
 
     password_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    new_user = User(name=name, email=email, password_hash=password_hash)
+    role = Role.ADMIN.value if email == 'admin@test.com' else Role.MEMBER.value
+
+    new_user = User(name=name, email=email, password_hash=password_hash, role=role)
     db.session.add(new_user)
     db.session.commit()
 
     token = generate_token(new_user.id, new_user.role)
-    return jsonify({'message': 'User created', 'token': token, 'user': {'id': new_user.id, 'name': new_user.name, 'email': new_user.email, 'role': new_user.role}}), 201
+    return jsonify({'message': 'User created', 'token': token, 'role': new_user.role}), 201
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -118,45 +130,25 @@ def login():
 
     user = User.query.filter_by(email=email).first()
     if not user or not bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
-        return jsonify({'error': 'Invalid email or password'}), 401
+        return jsonify({'error': 'Invalid credentials'}), 401
 
     token = generate_token(user.id, user.role)
-    return jsonify({'message': 'Login successful', 'token': token, 'user': {'id': user.id, 'name': user.name, 'email': user.email, 'role': user.role}}), 200
-
-# ===================== RBAC HELPER =====================
-def require_auth(f):
-    def decorated(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        print("🔍 DEBUG - Received Authorization header:", token)   # <--- debug line
-        if not token or not token.startswith('Bearer '):
-            return jsonify({'error': 'Missing or invalid token'}), 401
-        raw_token = token.split('Bearer ')[1].strip()
-        print("🔍 DEBUG - Extracted raw token:", raw_token[:50] + "..." if len(raw_token) > 50 else raw_token)
-        payload = decode_token(raw_token)
-        if not payload:
-            return jsonify({'error': 'Invalid token'}), 401
-        request.current_user = {'id': payload['user_id'], 'role': payload['role']}
-        return f(*args, **kwargs)
-    decorated.__name__ = f.__name__
-    return decorated
+    return jsonify({
+        'message': 'Login successful',
+        'token': token,
+        'user': {'id': user.id, 'name': user.name, 'email': user.email, 'role': user.role}
+    }), 200
 
 # ===================== PROJECTS =====================
 @app.route('/api/projects', methods=['POST'])
 @require_auth
 def create_project():
     data = request.get_json()
-    name = data.get('name')
-    description = data.get('description')
-
-    if not name:
-        return jsonify({'error': 'Project name required'}), 400
-
-    project = Project(name=name, description=description, owner_id=request.current_user['id'])
+    project = Project(name=data.get('name'), description=data.get('description'), owner_id=request.current_user['id'])
     db.session.add(project)
     db.session.commit()
 
-    member = ProjectMember(project_id=project.id, user_id=request.current_user['id'])
-    db.session.add(member)
+    db.session.add(ProjectMember(project_id=project.id, user_id=request.current_user['id']))
     db.session.commit()
 
     return jsonify({'id': project.id, 'name': project.name, 'description': project.description}), 201
@@ -164,9 +156,32 @@ def create_project():
 @app.route('/api/projects', methods=['GET'])
 @require_auth
 def get_projects():
-    projects = Project.query.all()
-    result = [{'id': p.id, 'name': p.name, 'description': p.description} for p in projects]
-    return jsonify(result)
+    if request.current_user['role'] == 'ADMIN':
+        projects = Project.query.all()
+    else:
+        projects = Project.query.filter(
+            (Project.owner_id == request.current_user['id']) |
+            (Project.id.in_([m.project_id for m in ProjectMember.query.filter_by(user_id=request.current_user['id']).all()]))
+        ).all()
+    return jsonify([{'id': p.id, 'name': p.name, 'description': p.description} for p in projects])
+
+@app.route('/api/projects/<int:project_id>/members', methods=['POST'])
+@require_auth
+def add_member(project_id):
+    if request.current_user['role'] != 'ADMIN':
+        project = Project.query.get(project_id)
+        if not project or project.owner_id != request.current_user['id']:
+            return jsonify({'error': 'Not authorized'}), 403
+
+    data = request.get_json()
+    user_id = data.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'User ID required'}), 400
+
+    member = ProjectMember(project_id=project_id, user_id=user_id)
+    db.session.add(member)
+    db.session.commit()
+    return jsonify({'message': 'Member added'}), 201
 
 # ===================== TASKS =====================
 @app.route('/api/projects/<int:project_id>/tasks', methods=['POST'])
@@ -179,30 +194,39 @@ def create_task(project_id):
         project_id=project_id,
         assignee_id=data.get('assignee_id'),
         created_by_id=request.current_user['id'],
-        due_date=datetime.fromisoformat(data.get('due_date')) if data.get('due_date') else None
+        status=data.get('status', 'TODO'),
+        priority=data.get('priority', 'MEDIUM')
     )
     db.session.add(task)
     db.session.commit()
-    return jsonify({'id': task.id, 'title': task.title, 'status': task.status}), 201
+    return jsonify({'id': task.id, 'title': task.title}), 201
 
 @app.route('/api/projects/<int:project_id>/tasks', methods=['GET'])
 @require_auth
 def get_tasks(project_id):
     tasks = Task.query.filter_by(project_id=project_id).all()
-    result = [{
-        'id': t.id,
-        'title': t.title,
-        'status': t.status,
-        'priority': t.priority,
-        'due_date': t.due_date.isoformat() if t.due_date else None,
-        'assignee_id': t.assignee_id
-    } for t in tasks]
-    return jsonify(result)
+    return jsonify([{
+        'id': t.id, 'title': t.title, 'status': t.status,
+        'priority': t.priority, 'assignee_id': t.assignee_id
+    } for t in tasks])
+@app.route('/api/tasks/<int:task_id>', methods=['DELETE'])
+@require_auth
+def delete_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({'error': 'Task not found'}), 404
+    
+    # Allow delete if admin or task creator
+    if request.current_user['role'] == 'ADMIN' or task.created_by_id == request.current_user['id']:
+        db.session.delete(task)
+        db.session.commit()
+        return jsonify({'message': 'Task deleted successfully'}), 200
+    else:
+        return jsonify({'error': 'Not authorized to delete this task'}), 403
 
 # ===================== STARTUP =====================
 with app.app_context():
     db.create_all()
-    print("✅ Tables ready")
 
 @app.route('/')
 def home():
