@@ -80,7 +80,7 @@
     }
 
     async function signup() {
-      const res = await fetch('http://127.0.0.1:5000/api/signup', {
+      const res = await fetch('https://taskmanager-6q51.onrender.com/api/signup', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -98,7 +98,7 @@
     }
 
     async function userLogin() {
-      const res = await fetch('http://127.0.0.1:5000/api/login', {
+      const res = await fetch('https://taskmanager-6q51.onrender.com/api/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
@@ -114,7 +114,7 @@
     }
 
     async function adminLogin() {
-      const res = await fetch('http://127.0.0.1:5000/api/login', {
+      const res = await fetch('https://taskmanager-6q51.onrender.com/api/login', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({

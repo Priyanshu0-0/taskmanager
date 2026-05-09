@@ -180,7 +180,7 @@
 
     async function loadProjects() {
       try {
-        const res = await fetch('http://127.0.0.1:5000/api/projects', {
+        const res = await fetch('https://taskmanager-6q51.onrender.com/api/projects', {
           headers: { Authorization: `Bearer ${token}` }
         });
         const projects = await res.json();
@@ -213,7 +213,7 @@
       if (!name) return;
       const desc = prompt("Description (optional):") || "";
 
-      fetch('http://127.0.0.1:5000/api/projects', {
+      fetch('https://taskmanager-6q51.onrender.com/api/projects', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
