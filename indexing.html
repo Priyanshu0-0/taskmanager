@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <div class="container">
+    <div class="row justify-content-center mt-5">
+      <div class="col-md-4">
+        <h2 class="text-center mb-4">Task Manager</h2>
+        
+        <!-- Login Form -->
+        <div id="loginForm">
+          <h4>Login</h4>
+          <input id="loginEmail" type="email" class="form-control mb-2" placeholder="Email" value="test@test.com">
+          <input id="loginPassword" type="password" class="form-control mb-2" placeholder="Password" value="123456">
+          <button onclick="login()" class="btn btn-primary w-100">Login</button>
+          <p class="text-center mt-3">Don't have account? <a href="#" onclick="showSignup()">Sign up</a></p>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="d-none">
+          <h4>Sign Up</h4>
+          <input id="signupName" type="text" class="form-control mb-2" placeholder="Name">
+          <input id="signupEmail" type="email" class="form-control mb-2" placeholder="Email">
+          <input id="signupPassword" type="password" class="form-control mb-2" placeholder="Password">
+          <button onclick="signup()" class="btn btn-success w-100">Sign Up</button>
+          <p class="text-center mt-3">Already have account? <a href="#" onclick="showLogin()">Login</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showSignup() { document.getElementById('loginForm').classList.add('d-none'); document.getElementById('signupForm').classList.remove('d-none'); }
+    function showLogin() { document.getElementById('signupForm').classList.add('d-none'); document.getElementById('loginForm').classList.remove('d-none'); }
+
+    async function signup() {
+      const res = await fetch('http://127.0.0.1:5000/api/signup', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          name: document.getElementById('signupName').value,
+          email: document.getElementById('signupEmail').value,
+          password: document.getElementById('signupPassword').value
+        })
+      });
+      const data = await res.json();
+      if (data.token) {
+        sessionStorage.setItem('token', data.token);
+        window.location.href = 'dashbord.html';
+      } else alert(data.error || 'Signup failed');
+    }
+
+    async function login() {
+      const res = await fetch('http://127.0.0.1:5000/api/login', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          email: document.getElementById('loginEmail').value,
+          password: document.getElementById('loginPassword').value
+        })
+      });
+      const data = await res.json();
+      if (data.token) {
+        sessionStorage.setItem('token', data.token);
+        window.location.href = 'dashbord.html';
+      } else alert(data.error || 'Login failed');
+    }
+  </script>
+</body>
+</html>
