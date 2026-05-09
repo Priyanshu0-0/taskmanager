@@ -7,6 +7,15 @@ import bcrypt
 import jwt
 import os
 from dotenv import load_dotenv
+from flask import Flask, send_from_directory
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), filename)
+
+@app.route('/')
+def home():
+    return send_from_directory(os.path.join(os.path.dirname(__file__), '..'), 'indexing.html')
 
 load_dotenv()
 
