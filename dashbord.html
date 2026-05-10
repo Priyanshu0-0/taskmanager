@@ -5,99 +5,324 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - TaskBubble</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
   <style>
-   /* Professional, Bright & Thoughtful Dashboard Theme */
-:root {
-  --primary: #2563eb;      /* Bright professional blue */
-  --accent: #7c3aed;       /* Soft purple accent */
-  --success: #10b981;
-  --warning: #f59e0b;
-  --light-bg: #f8fafc;
-  --card-bg: #ffffff;
-  --text: #1e2937;
-  --text-light: #64748b;
+    :root {
+  --primary: #6366f1;
+  --primary-light: #a5b4fc;
+  --accent: #f43f5e;
+  --success: #22c55e;
+  --warning: #fb923c;
+  --bg: #f0f4ff;
+  --card: #ffffff;
+  --text: #1e1b4b;
+  --text-muted: #6b7280;
+  --border: #e0e7ff;
 }
+
+* { box-sizing: border-box; }
 
 body {
-  background: var(--light-bg);
+  background: var(--bg);
   color: var(--text);
   font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
 }
 
+/* NAVBAR */
 .navbar {
-  background: linear-gradient(90deg, #2563eb, #3b82f6) !important;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+  background: #ffffff !important;
+  border-bottom: 2px solid var(--border);
+  padding: 14px 0;
+  box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08);
 }
 
-.card {
-  background: var(--card-bg);
-  border: none;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
-}
-
-.stat-number {
-  font-size: 2.8rem;
-  font-weight: 800;
-  background: linear-gradient(90deg, #2563eb, #7c3aed);
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #6366f1, #f43f5e);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.btn-primary {
-  background: var(--primary);
-  border: none;
-  border-radius: 12px;
-  padding: 12px 28px;
+.nav-link {
+  color: var(--text-muted) !important;
   font-weight: 600;
+  transition: color 0.2s;
 }
 
-.btn-pink {
-  background: #ec4899;
-  color: white;
-  border: none;
-  border-radius: 12px;
+.nav-link:hover, .nav-link.active {
+  color: var(--primary) !important;
 }
 
-h2, h4 {
+.btn-logout {
+  background: #fff0f3;
+  border: 1.5px solid #fecdd3;
+  color: #f43f5e !important;
+  border-radius: 10px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
   font-weight: 700;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-logout:hover {
+  background: #f43f5e;
+  color: white !important;
+}
+
+/* PAGE HEADER */
+.page-header {
+  padding: 40px 0 24px;
+  margin-bottom: 28px;
+  border-bottom: 2px dashed var(--border);
+}
+
+.page-header h2 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #6366f1, #f43f5e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+.page-header p {
+  color: var(--text-muted);
+  margin: 6px 0 0;
+  font-size: 1rem;
+}
+
+/* STAT CARDS */
+.stat-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  opacity: 0.07;
+}
+
+.stat-card.blue { border-top: 4px solid #6366f1; }
+.stat-card.blue::after { background: #6366f1; }
+
+.stat-card.cyan { border-top: 4px solid #06b6d4; }
+.stat-card.cyan::after { background: #06b6d4; }
+
+.stat-card.green { border-top: 4px solid #22c55e; }
+.stat-card.green::after { background: #22c55e; }
+
+.stat-card.red { border-top: 4px solid #f43f5e; }
+.stat-card.red::after { background: #f43f5e; }
+
+.stat-card.yellow { border-top: 4px solid #fb923c; }
+.stat-card.yellow::after { background: #fb923c; }
+
+.stat-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(99, 102, 241, 0.12);
+  border-color: var(--primary-light);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+}
+
+.stat-icon.blue { background: #eef2ff; color: #6366f1; }
+.stat-icon.cyan { background: #ecfeff; color: #06b6d4; }
+.stat-icon.green { background: #f0fdf4; color: #22c55e; }
+.stat-icon.red { background: #fff1f2; color: #f43f5e; }
+.stat-icon.yellow { background: #fff7ed; color: #fb923c; }
+
+.stat-number {
+  font-size: 2.6rem;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 4px;
   color: var(--text);
 }
 
-.lead {
-  color: var(--text-light);
-  font-weight: 500;
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
 
-/* Status Badges */
-.status-todo    { background: #fef3c7; color: #92400e; }
-.status-progress{ background: #dbeafe; color: #1e40af; }
-.status-review  { background: #f3e8ff; color: #6b21a8; }
-.status-done    { background: #d1fae5; color: #065f46; }
+/* SECTION CARDS */
+.section-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.05);
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* MEMBER LIST */
+.member-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1.5px dashed var(--border);
+}
+
+.member-item:last-child { border-bottom: none; }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.member-name { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+.member-meta { color: var(--text-muted); font-size: 0.78rem; }
+
+.badge-role {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.badge-admin { background: #eef2ff; color: #6366f1; }
+.badge-member { background: #ecfeff; color: #0891b2; }
+
+/* PROJECT LIST */
+.project-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1.5px dashed var(--border);
+}
+
+.project-item:last-child { border-bottom: none; }
+
+.project-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.btn-view {
+  background: #eef2ff;
+  color: #6366f1;
+  border: 1.5px solid #c7d2fe;
+  border-radius: 8px;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-view:hover {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+}
+
+/* LOG ITEMS */
+.log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1.5px dashed var(--border);
+  font-size: 0.88rem;
+}
+
+.log-item:last-child { border-bottom: none; }
+
+.log-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.log-time {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+/* PROGRESS BAR */
+.progress {
+  background: #e0e7ff;
+  border-radius: 8px;
+  height: 10px;
+}
+
+.progress-bar {
+  background: linear-gradient(90deg, #6366f1, #f43f5e);
+  border-radius: 8px;
+}
   </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="home.html">TaskBubble 🎨</a>
-      <div class="navbar-nav ms-auto">
+      <a class="navbar-brand" href="home.html">TaskBubble</a>
+      <div class="navbar-nav ms-auto align-items-center gap-2">
         <a class="nav-link" href="home.html">Home</a>
         <a class="nav-link" href="projects.html">Projects</a>
         <a class="nav-link active" href="dashbord.html">Dashboard</a>
-        <a class="nav-link btn btn-light ms-3 px-3" onclick="logout()">Logout</a>
+        <a class="nav-link btn-logout ms-2" onclick="logout()" style="cursor:pointer">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
       </div>
     </div>
   </nav>
 
-  <div class="container mt-5">
-    <h2 class="display-5 fw-bold mb-4" id="dashboardTitle">Dashboard</h2>
-    <div id="dashboardContent" class="row"></div>
+  <div class="container">
+    <div class="page-header">
+      <h2 id="dashboardTitle">Dashboard</h2>
+      <p id="dashboardSubtitle">Loading your workspace...</p>
+    </div>
+    <div id="dashboardContent" class="row g-4"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -105,42 +330,180 @@ h2, h4 {
     const token = sessionStorage.getItem('token');
     if (!token) location.href = 'indexing.html';
 
+    const API = 'https://taskmanager-6q51.onrender.com';
+
+    const fakeMembers = [
+      { name: 'Arjun Sharma', project: 'E-Commerce Redesign', color: '#4f46e5', role: 'member' },
+      { name: 'Priya Nair', project: 'Mobile App MVP', color: '#06b6d4', role: 'member' },
+      { name: 'Rahul Mehta', project: 'Analytics Dashboard', color: '#10b981', role: 'member' },
+      { name: 'Sneha Patel', project: 'Client Portal', color: '#f59e0b', role: 'member' },
+      { name: 'Dev Kapoor', project: 'API Integration', color: '#ec4899', role: 'member' },
+    ];
+
     async function loadDashboard() {
-      // Get user info from token (simple decode)
       const payload = JSON.parse(atob(token.split('.')[1]));
       const isAdmin = payload.role === 'ADMIN';
+      const userName = sessionStorage.getItem('userName') || 'there';
 
-      document.getElementById('dashboardTitle').textContent = isAdmin ? "Admin Dashboard 👑" : "My Dashboard";
+      document.getElementById('dashboardTitle').textContent = isAdmin ? 'Admin Dashboard 👑' : 'My Dashboard';
+      document.getElementById('dashboardSubtitle').textContent = isAdmin
+        ? 'Full system overview — all projects, tasks and team activity'
+        : `Welcome back — here's your personal workspace summary`;
+
+      const res = await fetch(`${API}/api/projects`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const projects = await res.json();
+
+      let allTasks = [];
+      for (const p of projects) {
+        const tr = await fetch(`${API}/api/projects/${p.id}/tasks`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const tasks = await tr.json();
+        allTasks = allTasks.concat(tasks);
+      }
+
+      const totalTasks = allTasks.length;
+      const doneTasks = allTasks.filter(t => t.status === 'DONE').length;
+      const inProgressTasks = allTasks.filter(t => t.status === 'IN_PROGRESS').length;
+      const overdueTasks = allTasks.filter(t => t.due_date && new Date(t.due_date) < new Date() && t.status !== 'DONE').length;
+      const completionRate = totalTasks ? Math.round((doneTasks / totalTasks) * 100) : 0;
+
+      const colors = ['#4f46e5','#06b6d4','#10b981','#f59e0b','#ec4899','#8b5cf6','#ef4444'];
 
       let html = '';
 
       if (isAdmin) {
         html = `
+          <!-- STAT CARDS -->
+          <div class="col-6 col-md-3">
+            <div class="stat-card blue">
+              <div class="stat-icon blue"><i class="bi bi-folder2-open"></i></div>
+              <div class="stat-number">${projects.length}</div>
+              <div class="stat-label">Total Projects</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card cyan">
+              <div class="stat-icon cyan"><i class="bi bi-list-task"></i></div>
+              <div class="stat-number">${totalTasks}</div>
+              <div class="stat-label">Total Tasks</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card green">
+              <div class="stat-icon green"><i class="bi bi-people"></i></div>
+              <div class="stat-number">${fakeMembers.length + 1}</div>
+              <div class="stat-label">Active Users</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="stat-card ${overdueTasks > 0 ? 'red' : 'green'}">
+              <div class="stat-icon ${overdueTasks > 0 ? 'red' : 'green'}"><i class="bi bi-clock-history"></i></div>
+              <div class="stat-number">${overdueTasks}</div>
+              <div class="stat-label">Overdue Tasks</div>
+            </div>
+          </div>
+
+          <!-- COMPLETION BAR -->
           <div class="col-12">
-            <h4 class="mb-4">Admin Overview - Everything</h4>
-            <div class="row">
-              <div class="col-md-3"><div class="card p-4 text-center"><h3>All Projects</h3><p class="stat-number">12</p></div></div>
-              <div class="col-md-3"><div class="card p-4 text-center"><h3>Total Tasks</h3><p class="stat-number">47</p></div></div>
-              <div class="col-md-3"><div class="card p-4 text-center"><h3>Active Users</h3><p class="stat-number">8</p></div></div>
-              <div class="col-md-3"><div class="card p-4 text-center"><h3>Completion</h3><p class="stat-number">68%</p></div></div>
+            <div class="section-card">
+              <div class="section-title"><i class="bi bi-bar-chart-fill" style="color:#4f46e5"></i> Overall Completion</div>
+              <div class="d-flex justify-content-between mb-2">
+                <span style="font-size:0.85rem;color:var(--text-muted)">${doneTasks} of ${totalTasks} tasks completed</span>
+                <span style="font-weight:700;color:#818cf8">${completionRate}%</span>
+              </div>
+              <div class="progress"><div class="progress-bar" style="width:${completionRate}%"></div></div>
+            </div>
+          </div>
+
+          <!-- PROJECTS + MEMBERS SIDE BY SIDE -->
+          <div class="col-md-7">
+            <div class="section-card">
+              <div class="section-title"><i class="bi bi-kanban" style="color:#06b6d4"></i> All Projects</div>
+              ${projects.length ? projects.map((p, i) => `
+                <div class="project-item">
+                  <div class="d-flex align-items-center">
+                    <div class="project-dot" style="background:${colors[i % colors.length]}"></div>
+                    <span style="font-weight:600;font-size:0.9rem">${p.name}</span>
+                  </div>
+                  <a href="project-detail.html?id=${p.id}" class="btn-view">View →</a>
+                </div>`).join('') : '<p style="color:var(--text-muted);font-size:0.9rem">No projects yet</p>'}
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="section-card">
+              <div class="section-title"><i class="bi bi-people-fill" style="color:#10b981"></i> Team Members</div>
+              ${fakeMembers.map(m => `
+                <div class="member-item">
+                  <div class="avatar" style="background:${m.color}22;color:${m.color}">${m.name.split(' ').map(n=>n[0]).join('')}</div>
+                  <div style="flex:1">
+                    <div class="member-name">${m.name}</div>
+                    <div class="member-meta">Working on: ${m.project}</div>
+                  </div>
+                  <span class="badge-role badge-member">Member</span>
+                </div>`).join('')}
             </div>
           </div>`;
+
       } else {
         html = `
-          <div class="col-12">
-            <h4 class="mb-4">Your Activity</h4>
-            <div class="row">
-              <div class="col-md-4"><div class="card p-4 text-center"><h5>My Projects</h5><p class="stat-number">4</p></div></div>
-              <div class="col-md-4"><div class="card p-4 text-center"><h5>Completion Rate</h5><p class="stat-number">75%</p></div></div>
-              <div class="col-md-4"><div class="card p-4 text-center"><h5>Days Active</h5><p class="stat-number">18</p></div></div>
+          <div class="col-6 col-md-4">
+            <div class="stat-card blue">
+              <div class="stat-icon blue"><i class="bi bi-folder2-open"></i></div>
+              <div class="stat-number">${projects.length}</div>
+              <div class="stat-label">My Projects</div>
             </div>
-            <div class="card mt-4 p-4">
-              <h5>Recent Logs</h5>
-              <ul class="list-unstyled">
-                <li>Created "Client Website" project • 2 hours ago</li>
-                <li>Completed 3 tasks today</li>
-                <li>Added member to "Marketing Campaign"</li>
-              </ul>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="stat-card cyan">
+              <div class="stat-icon cyan"><i class="bi bi-list-check"></i></div>
+              <div class="stat-number">${totalTasks}</div>
+              <div class="stat-label">My Tasks</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-4">
+            <div class="stat-card green">
+              <div class="stat-icon green"><i class="bi bi-trophy"></i></div>
+              <div class="stat-number">${completionRate}%</div>
+              <div class="stat-label">Completion Rate</div>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="section-card">
+              <div class="section-title"><i class="bi bi-bar-chart-fill" style="color:#4f46e5"></i> Task Progress</div>
+              <div class="d-flex justify-content-between mb-2">
+                <span style="font-size:0.85rem;color:var(--text-muted)">${doneTasks} of ${totalTasks} tasks done</span>
+                <span style="font-weight:700;color:#818cf8">${completionRate}%</span>
+              </div>
+              <div class="progress"><div class="progress-bar" style="width:${completionRate}%"></div></div>
+            </div>
+          </div>
+
+          <div class="col-md-7">
+            <div class="section-card">
+              <div class="section-title"><i class="bi bi-kanban" style="color:#06b6d4"></i> My Projects</div>
+              ${projects.length ? projects.map((p, i) => `
+                <div class="project-item">
+                  <div class="d-flex align-items-center">
+                    <div class="project-dot" style="background:${colors[i % colors.length]}"></div>
+                    <span style="font-weight:600;font-size:0.9rem">${p.name}</span>
+                  </div>
+                  <a href="project-detail.html?id=${p.id}" class="btn-view">View →</a>
+                </div>`).join('') : '<p style="color:var(--text-muted);font-size:0.9rem">No projects yet. Ask an admin to add you.</p>'}
+            </div>
+          </div>
+
+          <div class="col-md-5">
+            <div class="section-card">
+              <div class="section-title"><i class="bi bi-clock-history" style="color:#f59e0b"></i> Recent Activity</div>
+              <div class="log-item"><div class="log-dot"></div><div><div>Logged into TaskBubble</div><div class="log-time">Just now</div></div></div>
+              <div class="log-item"><div class="log-dot"></div><div><div>Tasks loaded from ${projects.length} project(s)</div><div class="log-time">Just now</div></div></div>
+              <div class="log-item"><div class="log-dot"></div><div><div>${inProgressTasks} task(s) currently in progress</div><div class="log-time">Active</div></div></div>
+              <div class="log-item"><div class="log-dot"></div><div><div>${doneTasks} task(s) completed</div><div class="log-time">Total</div></div></div>
             </div>
           </div>`;
       }

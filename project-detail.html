@@ -5,42 +5,429 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Project Detail - TaskBubble</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-light: #a5b4fc;
+      --pink: #f43f5e;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --bg: #f0f4ff;
+      --card: #ffffff;
+      --text: #1e1b4b;
+      --text-muted: #6b7280;
+      --border: #e0e7ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAVBAR */
+    .navbar {
+      background: #ffffff !important;
+      border-bottom: 2px solid var(--border);
+      padding: 14px 0;
+      box-shadow: 0 2px 12px rgba(99, 102, 241, 0.08);
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 900;
+      background: linear-gradient(90deg, #6366f1, #f43f5e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-link {
+      color: #6b7280 !important;
+      font-weight: 600;
+      transition: color 0.2s;
+      border-radius: 8px;
+      padding: 6px 14px !important;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary) !important;
+      background: #eef2ff;
+    }
+
+    .btn-logout {
+      background: #fff0f3;
+      border: 1.5px solid #fecdd3;
+      color: #f43f5e !important;
+      border-radius: 10px;
+      padding: 6px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #f43f5e;
+      color: white !important;
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+      padding: 32px 0 20px;
+      border-bottom: 2px dashed var(--border);
+      margin-bottom: 28px;
+    }
+
+    .page-header h2 {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--text);
+      margin: 0;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      margin: 4px 0 0;
+    }
+
+    /* CARDS */
+    .section-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.05);
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* FORM */
+    .form-control, .form-select {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      color: var(--text);
+      background: #f8faff;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      background: white;
+    }
+
+    .form-label {
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    .btn-create {
+      background: linear-gradient(90deg, #6366f1, #f43f5e);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 800;
+      width: 100%;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .btn-create:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+    }
+
+    /* TASK CARDS */
+    .task-card {
+      background: #f8faff;
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .task-card:hover {
+      border-color: var(--primary-light);
+      box-shadow: 0 6px 20px rgba(99, 102, 241, 0.1);
+      transform: translateX(4px);
+    }
+
+    .task-card.done {
+      opacity: 0.7;
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
+    .task-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .task-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    /* STATUS BADGES */
+    .badge-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-TODO { background: #fef3c7; color: #92400e; }
+    .badge-IN_PROGRESS { background: #dbeafe; color: #1e40af; }
+    .badge-REVIEW { background: #f3e8ff; color: #6b21a8; }
+    .badge-DONE { background: #d1fae5; color: #065f46; }
+
+    /* PRIORITY BADGES */
+    .badge-priority {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+
+    .badge-LOW { background: #f0fdf4; color: #16a34a; }
+    .badge-MEDIUM { background: #fffbeb; color: #d97706; }
+    .badge-HIGH { background: #fff1f2; color: #be123c; }
+
+    /* STATUS SELECT */
+    .status-select {
+      font-size: 0.78rem;
+      padding: 4px 8px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background: #fff1f2;
+      color: #f43f5e;
+      border: 1.5px solid #fecdd3;
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-delete:hover {
+      background: #f43f5e;
+      color: white;
+    }
+
+    /* MEMBER AVATARS */
+    .member-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+      border: 2px solid white;
+      margin-right: -8px;
+    }
+
+    .btn-add-member {
+      background: #eef2ff;
+      color: #6366f1;
+      border: 2px dashed #a5b4fc;
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-add-member:hover {
+      background: #6366f1;
+      color: white;
+      border-color: #6366f1;
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state i {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      color: #c7d2fe;
+    }
+
+    /* MODAL */
+    .modal-content {
+      border-radius: 20px;
+      border: 2px solid var(--border);
+    }
+
+    .modal-header {
+      border-bottom: 2px dashed var(--border);
+      padding: 20px 24px;
+    }
+
+    .modal-title {
+      font-weight: 800;
+      color: var(--text);
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+  <!-- NAVBAR -->
+  <nav class="navbar navbar-expand-lg">
     <div class="container">
-      <a class="navbar-brand fw-bold" href="home.html">TaskBubble</a>
-      <div class="navbar-nav ms-auto">
+      <a class="navbar-brand" href="home.html">TaskBubble 🎨</a>
+      <div class="navbar-nav ms-auto align-items-center gap-2">
         <a class="nav-link" href="home.html">Home</a>
         <a class="nav-link" href="projects.html">Projects</a>
         <a class="nav-link" href="dashbord.html">Dashboard</a>
-        <a class="nav-link btn btn-light ms-3 px-3" onclick="logout()">Logout</a>
+        <a class="btn-logout ms-2" onclick="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </a>
       </div>
     </div>
   </nav>
 
-  <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 id="projectTitle" class="fw-bold">Project Name</h2>
-      <button id="addMemberBtn" onclick="addMember()" class="btn btn-primary d-none">+ Add Member</button>
+  <div class="container">
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <h2 id="projectTitle">Loading...</h2>
+          <p id="projectDesc">Fetching project details...</p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <div id="memberAvatars" class="d-flex align-items-center me-2"></div>
+          <button id="addMemberBtn" onclick="showAddMemberModal()" class="btn-add-member d-none">
+            <i class="bi bi-person-plus"></i> Add Member
+          </button>
+          <a href="projects.html" style="color:var(--text-muted);font-size:0.85rem;font-weight:600;text-decoration:none">
+            ← Back to Projects
+          </a>
+        </div>
+      </div>
     </div>
 
-    <div class="row">
-      <!-- Task Creation -->
+    <div class="row g-4">
+      <!-- CREATE TASK FORM -->
       <div class="col-md-4">
-        <div class="card p-4 mb-4">
-          <h5 class="mb-3">Create New Task</h5>
-          <input id="taskTitle" class="form-control mb-2" placeholder="Task Title">
-          <textarea id="taskDesc" class="form-control mb-3" rows="2" placeholder="Description"></textarea>
-          <button onclick="createTask()" class="btn btn-primary w-100">Create Task</button>
+        <div class="section-card">
+          <div class="section-title">
+            <i class="bi bi-plus-circle-fill" style="color:#6366f1"></i> New Task
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Task Title *</label>
+            <input id="taskTitle" class="form-control" placeholder="What needs to be done?">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea id="taskDesc" class="form-control" rows="2" placeholder="Optional details..."></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Priority</label>
+            <select id="taskPriority" class="form-select">
+              <option value="LOW">🟢 Low</option>
+              <option value="MEDIUM" selected>🟡 Medium</option>
+              <option value="HIGH">🔴 High</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Due Date</label>
+            <input id="taskDueDate" type="date" class="form-control">
+          </div>
+          <div class="mb-4">
+            <label class="form-label">Status</label>
+            <select id="taskStatus" class="form-select">
+              <option value="TODO">📋 To Do</option>
+              <option value="IN_PROGRESS">⚡ In Progress</option>
+              <option value="REVIEW">👀 Review</option>
+              <option value="DONE">✅ Done</option>
+            </select>
+          </div>
+          <button onclick="createTask()" class="btn-create">
+            <i class="bi bi-plus-lg"></i> Create Task
+          </button>
         </div>
       </div>
 
-      <!-- Tasks List -->
+      <!-- TASK LIST -->
       <div class="col-md-8">
-        <h5 class="mb-3"></h5>
-        <div id="taskList" class="row"></div>
+        <div class="section-card">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="section-title mb-0">
+              <i class="bi bi-kanban-fill" style="color:#f43f5e"></i> Tasks
+            </div>
+            <div class="d-flex gap-2">
+              <select id="filterStatus" class="status-select" onchange="filterTasks()">
+                <option value="ALL">All Status</option>
+                <option value="TODO">To Do</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="REVIEW">Review</option>
+                <option value="DONE">Done</option>
+              </select>
+            </div>
+          </div>
+          <div id="taskList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD MEMBER MODAL -->
+  <div class="modal fade" id="addMemberModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Add Member</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <label class="form-label">User ID</label>
+          <input id="memberUserId" type="number" class="form-control mb-2" placeholder="Enter user ID">
+          <small style="color:var(--text-muted)">Ask the user to check their profile for their ID</small>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button type="button" class="btn-create" onclick="addMember()" style="width:auto;padding:10px 24px">
+            Add Member
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -48,86 +435,155 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
     const token = sessionStorage.getItem('token');
-    const projectId = sessionStorage.getItem('currentProjectId');
+    const projectId = new URLSearchParams(window.location.search).get('id');
     if (!token || !projectId) location.href = 'projects.html';
 
+    const API = 'https://taskmanager-6q51.onrender.com';
+    let allTasks = [];
     let currentUserRole = 'MEMBER';
 
     async function loadProjectDetail() {
       const payload = JSON.parse(atob(token.split('.')[1]));
       currentUserRole = payload.role;
 
-      const res = await fetch(`https://taskmanager-6q51.onrender.com/api/projects/${projectId}/tasks`, {
+      // fetch tasks
+      const res = await fetch(`${API}/api/projects/${projectId}/tasks`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      const tasks = await res.json();
+      allTasks = await res.json();
 
-      let html = '';
-      tasks.forEach(t => {
-        html += `
-          <div class="col-12 mb-3">
-            <div class="card">
-              <div class="card-body d-flex justify-content-between align-items-center">
-                <div>
-                  <h5>${t.title}</h5>
-                  <small class="text-muted">${t.description || ''}</small>
-                </div>
-                <div>
-                  <span class="badge status-${t.status.toLowerCase()} me-2">${t.status}</span>
-                  <button onclick="deleteTask(${t.id})" class="btn btn-sm btn-outline-danger">Delete</button>
-                </div>
-              </div>
-            </div>
-          </div>`;
+      // set project title from projects list
+      const pRes = await fetch(`${API}/api/projects`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+      const projects = await pRes.json();
+      const project = projects.find(p => p.id == projectId);
+      if (project) {
+        document.getElementById('projectTitle').textContent = project.name;
+        document.getElementById('projectDesc').textContent = project.description || 'No description provided';
+      }
 
-      document.getElementById('taskList').innerHTML = html || '<p class="text-center text-muted">No tasks yet. Create one!</p>';
-
-      // Show Add Member button for Admin/Owner
+      // show add member for admin
       if (currentUserRole === 'ADMIN') {
         document.getElementById('addMemberBtn').classList.remove('d-none');
       }
+
+      renderTasks(allTasks);
     }
 
-    function createTask() {
-      const title = document.getElementById('taskTitle').value.trim();
-      if (!title) return alert("Task title is required");
+    function renderTasks(tasks) {
+      if (!tasks.length) {
+        document.getElementById('taskList').innerHTML = `
+          <div class="empty-state">
+            <i class="bi bi-clipboard-x"></i>
+            <p style="font-weight:600;font-size:1rem">No tasks yet</p>
+            <p style="font-size:0.85rem">Create your first task using the form on the left</p>
+          </div>`;
+        return;
+      }
 
-      fetch(`https://taskmanager-6q51.onrender.com/api/projects/${projectId}/tasks`, {
+      const colors = ['#6366f1','#f43f5e','#06b6d4','#22c55e','#f59e0b','#8b5cf6'];
+
+      document.getElementById('taskList').innerHTML = tasks.map((t, i) => `
+        <div class="task-card ${t.status === 'DONE' ? 'done' : ''}">
+          <div class="d-flex justify-content-between align-items-start">
+            <div style="flex:1">
+              <div class="task-title">${t.status === 'DONE' ? '<s>' : ''}${t.title}${t.status === 'DONE' ? '</s>' : ''}</div>
+              ${t.description ? `<div class="task-desc">${t.description}</div>` : ''}
+              <div class="d-flex gap-2 flex-wrap mt-2">
+                <span class="badge-status badge-${t.status}">${t.status.replace('_', ' ')}</span>
+                <span class="badge-priority badge-${t.priority}">${t.priority}</span>
+                ${t.due_date ? `<span style="font-size:0.75rem;color:var(--text-muted)"><i class="bi bi-calendar3"></i> ${new Date(t.due_date).toLocaleDateString()}</span>` : ''}
+              </div>
+            </div>
+            <div class="d-flex flex-column gap-2 ms-3">
+              <select class="status-select" onchange="updateStatus(${t.id}, this.value)">
+                <option value="TODO" ${t.status==='TODO'?'selected':''}>📋 Todo</option>
+                <option value="IN_PROGRESS" ${t.status==='IN_PROGRESS'?'selected':''}>⚡ In Progress</option>
+                <option value="REVIEW" ${t.status==='REVIEW'?'selected':''}>👀 Review</option>
+                <option value="DONE" ${t.status==='DONE'?'selected':''}>✅ Done</option>
+              </select>
+              <button onclick="deleteTask(${t.id})" class="btn-delete">
+                <i class="bi bi-trash"></i> Delete
+              </button>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+
+    function filterTasks() {
+      const filter = document.getElementById('filterStatus').value;
+      const filtered = filter === 'ALL' ? allTasks : allTasks.filter(t => t.status === filter);
+      renderTasks(filtered);
+    }
+
+    async function createTask() {
+      const title = document.getElementById('taskTitle').value.trim();
+      if (!title) return alert('Task title is required');
+
+      const dueDate = document.getElementById('taskDueDate').value;
+
+      await fetch(`${API}/api/projects/${projectId}/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ 
-          title: title, 
-          description: document.getElementById('taskDesc').value 
+        body: JSON.stringify({
+          title,
+          description: document.getElementById('taskDesc').value,
+          priority: document.getElementById('taskPriority').value,
+          status: document.getElementById('taskStatus').value,
+          due_date: dueDate || null
         })
-      }).then(() => {
-        document.getElementById('taskTitle').value = '';
-        document.getElementById('taskDesc').value = '';
-        loadProjectDetail();
       });
+
+      document.getElementById('taskTitle').value = '';
+      document.getElementById('taskDesc').value = '';
+      document.getElementById('taskDueDate').value = '';
+      loadProjectDetail();
     }
 
-    function deleteTask(taskId) {
-  if (!confirm("Are you sure you want to delete this task?")) return;
+    async function updateStatus(taskId, newStatus) {
+      await fetch(`${API}/api/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+      loadProjectDetail();
+    }
 
-  fetch(`https://taskmanager-6q51.onrender.com/api/tasks/${taskId}`, {
-    method: 'DELETE',
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message || data.error);
-    loadProjectDetail();  
-  })
-  .catch(() => alert("Failed to delete task"));
-}
-    function addMember() {
-      const userId = prompt("Enter User ID to add:");
-      if (!userId) return;
-      alert("Member added (demo)");
+    async function deleteTask(taskId) {
+      if (!confirm('Delete this task?')) return;
+      await fetch(`${API}/api/tasks/${taskId}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      loadProjectDetail();
+    }
+
+    function showAddMemberModal() {
+      new bootstrap.Modal(document.getElementById('addMemberModal')).show();
+    }
+
+    async function addMember() {
+      const userId = document.getElementById('memberUserId').value;
+      if (!userId) return alert('User ID required');
+
+      const res = await fetch(`${API}/api/projects/${projectId}/members`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ user_id: parseInt(userId) })
+      });
+      const data = await res.json();
+      alert(data.message || data.error);
+      bootstrap.Modal.getInstance(document.getElementById('addMemberModal')).hide();
     }
 
     function logout() {

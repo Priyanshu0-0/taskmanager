@@ -224,9 +224,8 @@
     }
 
     function openProject(id) {
-      sessionStorage.setItem('currentProjectId', id);
-      location.href = 'project-detail.html';
-    }
+  location.href = `project-detail.html?id=${id}`;
+}
 
     function logout() {
       sessionStorage.clear();
